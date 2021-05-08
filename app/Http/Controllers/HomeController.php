@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+use Illuminate\Pagination\LengthAwarePaginator;
 class HomeController extends Controller
 {
     /**
@@ -32,13 +32,13 @@ class HomeController extends Controller
 
         $params = [
             'limit' => request()->query('perpage',25),
-            'offset' => request()->query('offset',0),
+            'offset' => request()->query('page',0),
             'rating' => 'g',
             'lang'=>'en'
         ];
 
         $gifsData = app('giphy')->gif()->search('tt',$params);
-        $gifs = json_decode($gifsData);
+        $gifs =collect(json_decode($gifsData, true));
 
         /*
          * $gifs
@@ -47,8 +47,16 @@ class HomeController extends Controller
          * pagination[total_count,count,offset]
          */
         //return response()->json();
-        $pagesCount = ceil($gifs->pagination->total_count / $params['limit']);
+        $pagesCount = ceil($gifs['pagination']['total_count'] / $params['limit']);
 
-        return view('home',compact('gifs','pagesCount'));
+        $paginator = new LengthAwarePaginator(
+            null,
+            $gifs['pagination']['total_count'],
+            $params['limit'],
+            $params['offset'],
+            ['path' => 'home']
+        );
+
+        return view('home',compact('gifs','paginator'));
     }
 }
