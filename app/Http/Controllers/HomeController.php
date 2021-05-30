@@ -16,6 +16,10 @@ class HomeController extends Controller
         $this->middleware('auth');
     }
 
+    public function nptifications()
+    {
+        return 'nptifications';
+    }
     /**
      * Show the application dashboard.
      *

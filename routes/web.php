@@ -1,5 +1,6 @@
 <?php
 
+use App\Events\NewNewsMessage;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,9 +15,11 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
+    NewNewsMessage::dispatch();
     return view('welcome');
 });
 
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/notifications', [App\Http\Controllers\HomeController::class, 'nptifications'])->name('home');
